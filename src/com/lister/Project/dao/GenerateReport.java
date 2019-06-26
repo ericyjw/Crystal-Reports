@@ -9,33 +9,40 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggerFactory;
-
 import com.businessobjects.samples.CRJavaHelper;
 import com.crystaldecisions.sdk.occa.report.application.ReportClientDocument;
 import com.crystaldecisions.sdk.occa.report.exportoptions.ReportExportFormat;
 import com.crystaldecisions.sdk.occa.report.lib.ReportSDKException;
 
 /**
- * @author souvik.p
- *
+ * Generate Crystal Report with the data in the database.
  */
 public class GenerateReport {
-	private static final String db_user="system";
-	private static final String db_pwd="kroger";
-	private static final String db_url="jdbc:oracle:thin:@localhost:1521:xe";
-	private static final String db_driver="oracle.jdbc.driver.OracleDriver";
-	//private static final Logger logger=;
-	
+	// H2 Database Connection Settings
+	private static final String db_user="sa";
+	private static final String db_pwd="";
+	private static final String db_url="jdbc:h2:tcp://localhost/~/test";
+	private static final String db_driver="org.h2.Driver";
+
+	// Input Sample Template
+	private final String sampleReport = "sample1.rpt";
+	private final String sampleReportFilePath = getClass().getClassLoader().getResource(sampleReport).getPath();
+
+	// Output Crystal Report
+	private final String outputDirectory = "C://reports/";
+
 	/**
+	 * Takes in a sample Crystal Report, updates that sample with the data from the database and exports the updated
+	 * Crystal Report.
+	 *
 	 * @return
 	 * @throws ReportSDKException
 	 * @throws IOException
 	 */
 	public boolean generate() throws ReportSDKException, IOException{
+
 		ReportClientDocument rcd=new ReportClientDocument();
-	    rcd.open("D://Report Templates/sample1.rpt", 0);
+	    rcd.open(sampleReportFilePath, 0);
 	    CRJavaHelper crj=new CRJavaHelper();
 	    crj.changeDataSource(rcd, db_user, db_pwd, db_url, db_driver, "");
 		crj.logonDataSource(rcd, db_user, db_pwd);
@@ -46,14 +53,10 @@ public class GenerateReport {
 	    System.out.println("File loaded succesfully");
 	    rcd.close();
 	    try{
-	    	Date d=new Date();
-	    	//String currentDate=Integer.toString(d.getDate())+Integer.toString(d.getMonth())+Integer.toString(d.)+"_"+Integer.toString(d.getHours())+":"+Integer.toString(d.getMinutes())+":"+Integer.toString(d.getSeconds());
 	    	String currentDate=new SimpleDateFormat("dd_MM_yyyy_hh_mm_ss_a'.pdf'").format(new Date());
-	    	System.out.println(currentDate);
-	    	String fname="Employee"+"_"+currentDate;
-	    	String directory="D://GeneratedReports";
-	    	String path=directory+"/"+fname;
-			File file = new File(path);
+	    	String fileName = "Employee"+"_" + currentDate;
+	    	String savingFilePath = outputDirectory + fileName;
+			File file = new File(savingFilePath);
 		    FileOutputStream fileOutputStream = new FileOutputStream(file);
 		    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(bais.available());
 		    byte[] byteArray=new byte[bais.available()];
