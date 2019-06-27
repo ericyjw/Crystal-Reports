@@ -17,15 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.crystaldecisions.sdk.occa.report.application.DataDefController;
 import com.crystaldecisions.sdk.occa.report.application.ReportClientDocument;
-import com.crystaldecisions.sdk.occa.report.data.FieldDisplayNameType;
-import com.crystaldecisions.sdk.occa.report.data.IConnectionInfo;
-import com.crystaldecisions.sdk.occa.report.data.ITable;
-import com.crystaldecisions.sdk.occa.report.data.ParameterField;
-import com.crystaldecisions.sdk.occa.report.data.ParameterFieldDiscreteValue;
-import com.crystaldecisions.sdk.occa.report.data.ParameterFieldRangeValue;
-import com.crystaldecisions.sdk.occa.report.data.RangeValueBoundType;
-import com.crystaldecisions.sdk.occa.report.data.Tables;
-import com.crystaldecisions.sdk.occa.report.data.Values;
+import com.crystaldecisions.sdk.occa.report.data.*;
 import com.crystaldecisions.sdk.occa.report.document.PaperSize;
 import com.crystaldecisions.sdk.occa.report.document.PaperSource;
 import com.crystaldecisions.sdk.occa.report.document.PrintReportOptions;
@@ -43,7 +35,7 @@ import com.crystaldecisions.sdk.occa.report.lib.ReportSDKException;
 import com.crystaldecisions.sdk.occa.report.lib.ReportSDKExceptionBase;
 
 /**
- * Crystal Reports Java Helper Sample
+ * Crystal Reports Java Helper Sample.
  * ************************
  * Please note that you need to define a runtime server in order for this class
  * to compile.
@@ -132,8 +124,12 @@ public class CRJavaHelper {
         // Obtain collection of tables from this database controller
         if (reportName == null || reportName.equals("")) {
             Tables tables = clientDoc.getDatabaseController().getDatabase().getTables();
+
             for(int i = 0;i < tables.size();i++){
                 origTable = tables.getTable(i);
+                sortBy(clientDoc, origTable,"SALARY", "ASC");
+                filterBy(clientDoc, "{EMPLOYEE_KROGER.NAME} = 'prearrivalapplicationservice'");
+
                 if (tableName == null || origTable.getName().equals(tableName)) {
                     newTable = (ITable)origTable.clone(true);
 
@@ -246,7 +242,80 @@ public class CRJavaHelper {
             }
         }
     }
-    
+
+    private static void filterBy(ReportClientDocument clientDoc, String filterCondition) throws ReportSDKException {
+        clientDoc.getDataDefController().getRecordFilterController()
+                .setFormulaText(filterCondition);
+    }
+
+    /**
+     * Sort the given column by the given sort direction.
+     *
+     * @param clientDoc
+     * @param table given table
+     * @param colName given column name
+     * @param sortDirection given sort direction
+     */
+    private static void sortBy(ReportClientDocument clientDoc, ITable table, String colName, String sortDirection) throws ReportSDKException {
+        Sort sort = setSortCol(clientDoc, table, colName);
+        sort = setSortDirection(sort, sortDirection);
+        if (isValid(sort)) {
+            clientDoc.getDataDefController().getRecordSortController().add(-1, sort);
+        }
+    }
+
+    /**
+     * Check that the column name and sort direction is set.
+     *
+     * @param sort the Sort object to be verified
+     * @return return true if both column name and sort direction is set, otherwise return false.
+     */
+    private static boolean isValid(Sort sort) {
+        return sort.getSortField() != null && sort.getDirection() != null;
+    }
+
+    /**
+     * Set the sort column for the Sort object.
+     *
+     * @param clientDoc the report client document
+     * @param table the table to be sorted
+     * @param colName the column name to be sorted
+     * @return a Sort object with update data field, or a new Sort object.
+     * @throws ReportSDKException
+     */
+    private static Sort setSortCol(ReportClientDocument clientDoc, ITable table, String colName) throws ReportSDKException {
+        Sort sort = new Sort();
+        Fields<IField> dataFields = table.getDataFields();
+        IField DbField = dataFields.findField(colName, FieldDisplayNameType.fieldName, Locale.ENGLISH);
+        if (clientDoc.getDataDefController().getRecordSortController().canSortOn(DbField)) {
+            sort.setSortField(DbField);
+            return sort;
+        }
+        return sort;
+    }
+
+    /**
+     * Set the given sort direction to the Sort object.
+     *
+     * @param sort the Sort object to be modified.
+     * @param sortDirection the sort direction to be added to the Sort object.
+     */
+    private static Sort setSortDirection(Sort sort, String sortDirection) {
+        switch (sortDirection) {
+            case "ASC":
+                sort.setDirection(SortDirection.from_int(SortDirection._ascendingOrder));
+                return sort;
+
+            case "DESC":
+                sort.setDirection(SortDirection.from_int(SortDirection._descendingOrder));
+                return sort;
+
+            default:
+                return sort;
+        }
+    }
+
+
     /**
      * Passes a populated java.sql.Resultset object to a Table object
      * 
@@ -448,8 +517,6 @@ public class CRJavaHelper {
      * 
      * @param clientDoc        The reportClientDocument representing the report being used
      * @param response        The HttpServletResponse object
-     * @param startPage        Starting page
-     * @param endPage        Ending page
      * @param attachment    true to prompts for open or save; false opens the report
      *                         in the specified format after exporting.
      * @throws ReportSDKExceptionBase

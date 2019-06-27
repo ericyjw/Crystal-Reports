@@ -39,17 +39,17 @@ public class GenerateReport {
 	 * @throws ReportSDKException
 	 * @throws IOException
 	 */
-	public boolean generate() throws ReportSDKException, IOException{
+	public boolean generate() throws ReportSDKException, IOException {
 
-		ReportClientDocument rcd=new ReportClientDocument();
+		ReportClientDocument rcd = new ReportClientDocument();
 	    rcd.open(sampleReportFilePath, 0);
-	    CRJavaHelper crj=new CRJavaHelper();
+	    CRJavaHelper crj = new CRJavaHelper();
 	    crj.changeDataSource(rcd, db_user, db_pwd, db_url, db_driver, "");
 		crj.logonDataSource(rcd, db_user, db_pwd);
 	    rcd.checkDatabaseAndUpdate();
 	    rcd.refreshReportDocument();
 	    System.out.println(rcd.path());
-	    ByteArrayInputStream bais=(ByteArrayInputStream)rcd.getPrintOutputController().export(ReportExportFormat.PDF);
+	    ByteArrayInputStream bais = (ByteArrayInputStream)rcd.getPrintOutputController().export(ReportExportFormat.PDF);
 	    System.out.println("File loaded succesfully");
 	    rcd.close();
 	    try{
