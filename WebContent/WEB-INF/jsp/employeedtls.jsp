@@ -32,7 +32,27 @@
             </tr>
         </c:forEach>
     </table>
+
     <form name="Generate_Report" action="generate" method="post">
+        Sort:
+        <select name="col">
+            <option value="id">ID</option>
+            <option value="name">NAME</option>
+            <option value="salary">SALARY</option>
+        </select>
+        <select name="sortBy">
+            <option value="ASC">ASC</option>
+            <option value="DESC">DESC</option>
+        </select>
+        <br><br>
+        Filter:
+        <select name="filterCol">
+            <option value="id">ID</option>
+            <option value="name">NAME</option>
+            <option value="salary">SALARY</option>
+        </select>
+        <textarea name="condition" placeholder="e.g. = 'core'"></textarea>
+
         <button type="submit">Publish Report</button>
         <br/>
         <div id="msg" style="color:red">${message}</div>

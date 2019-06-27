@@ -8,7 +8,7 @@
     <title>Employee Details</title>
     <script type="text/javascript">
         function viewTable() {
-            var url = "save";
+            var url = "view";
             window.location.replace(url)
         }
     </script>
@@ -24,7 +24,7 @@
         <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><input type="submit" value="Save"/>
     </form:form>
 
-    <button onclick="viewTable()">View Employees</button>
+    <button onclick="viewTable()">View Table</button>
 </div>
 </body>
 </html>

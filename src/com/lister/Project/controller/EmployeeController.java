@@ -10,9 +10,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import com.crystaldecisions.sdk.occa.report.lib.ReportSDKException;
 import com.lister.Project.domain.Employee;
@@ -49,7 +47,19 @@ public class EmployeeController {
     @RequestMapping("/delete")
     public String remove(@RequestParam int id, Map<String, Object> model) {
         es.removeEmployeeByID(id);
-        System.out.println("Deleted");
+        List<Employee> le = es.getEmployeeList();
+        model.put("Employees", le);
+        return "employeedtls";
+    }
+
+    /**
+     * Get the table view of the database.
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping("/view")
+    public String viewTable(Map<String, Object> model) {
         List<Employee> le = es.getEmployeeList();
         model.put("Employees", le);
         return "employeedtls";
@@ -61,9 +71,16 @@ public class EmployeeController {
      * @throws ReportSDKException
      * @throws IOException
      */
-    @RequestMapping("/generate")
-    public String generate(Model model) throws ReportSDKException, IOException {
-        if (es.generate()) {
+    @RequestMapping(value = "/generate",
+            params = { "col", "sortBy", "filterCol", "condition"})
+    public String generate(Model model,
+                           @RequestParam("col") String col,
+                           @RequestParam("sortBy") String sortBy,
+                           @RequestParam("filterCol") String filterCol,
+                           @RequestParam("condition") String condition
+    ) throws ReportSDKException, IOException {
+
+        if (es.generate(col, sortBy, filterCol, condition)) {
             model.addAttribute("message", "Report published succesfully");
         } else {
             model.addAttribute("message", "The output report file must be open in some other application.");

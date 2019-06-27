@@ -75,13 +75,16 @@ public class EmployeeService {
     }
 
     /**
+     * @param col
+     * @param sortBy
      * @return
      * @throws ReportSDKException
      * @throws IOException
      */
-    public boolean generate() throws ReportSDKException, IOException {
+    public boolean generate(String col, String sortBy, String filterCol, String condition) throws ReportSDKException,
+            IOException {
         gr = new GenerateReport();
-        return gr.generate();
+        return gr.generate(col, sortBy, filterCol, condition);
     }
 
     public void rollback() throws HibernateException, SQLException {

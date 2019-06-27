@@ -69,9 +69,10 @@ public class CRJavaHelper {
      */
     public static void changeDataSource(ReportClientDocument clientDoc,
                 String username, String password, String connectionURL,
-                String driverName,String jndiName) throws ReportSDKException {
+                String driverName,String jndiName, String col, String sortBy, String filterCol, String condition) throws ReportSDKException {
 
-        changeDataSource(clientDoc, null, null, username, password, connectionURL, driverName, jndiName);
+        changeDataSource(clientDoc, null, null, username, password, connectionURL, driverName,
+                jndiName, col, sortBy, filterCol, condition);
     }
 
     /**
@@ -86,10 +87,10 @@ public class CRJavaHelper {
      * @param jndiName        The JNDI name
      * @throws ReportSDKException
      */
-    public static void changeDataSource(ReportClientDocument clientDoc,
+    private static void changeDataSource(ReportClientDocument clientDoc,
                 String reportName, String tableName,
                 String username, String password, String connectionURL,
-                String driverName,String jndiName) throws ReportSDKException {
+                String driverName,String jndiName, String col, String sortBy, String filterCol, String condition) throws ReportSDKException {
 
         PropertyBag propertyBag = null;
         IConnectionInfo connectionInfo = null;
@@ -127,8 +128,9 @@ public class CRJavaHelper {
 
             for(int i = 0;i < tables.size();i++){
                 origTable = tables.getTable(i);
-                sortBy(clientDoc, origTable,"SALARY", "ASC");
-                filterBy(clientDoc, "{EMPLOYEE_KROGER.NAME} = 'prearrivalapplicationservice'");
+                sortBy(clientDoc, origTable, col, sortBy);
+                filterBy(clientDoc, "{EMPLOYEE_KROGER." + filterCol +"}" + condition);
+
 
                 if (tableName == null || origTable.getName().equals(tableName)) {
                     newTable = (ITable)origTable.clone(true);

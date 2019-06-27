@@ -49,7 +49,8 @@ public class ReportFunctions {
 		}
 		CRJavaHelper crj=new CRJavaHelper();
 		try{
-		crj.changeDataSource(rcd, "system", "kroger", "jdbc:oracle:thin:@localhost:1521:xe", "oracle.jdbc.driver.OracleDriver", "");
+		//crj.changeDataSource(rcd, "system", "kroger", "jdbc:oracle:thin:@localhost:1521:xe", "oracle.jdbc.driver" +
+					//".OracleDriver", "");
 		crj.logonDataSource(rcd, "system", "kroger");
 	    Tables tbls=rcd.getDatabaseController().getDatabase().getTables();
 	    for(int i=0;i<tbls.size();i++){
