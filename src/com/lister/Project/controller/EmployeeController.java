@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.lister.Project.domain.FilterCondition;
+import com.lister.Project.domain.InvalidFiltersException;
+import com.lister.Project.domain.SortCondition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -76,11 +79,22 @@ public class EmployeeController {
     public String generate(Model model,
                            @RequestParam("col") String col,
                            @RequestParam("sortBy") String sortBy,
-                           @RequestParam("filterCol") String filterCol,
-                           @RequestParam("condition") String condition
+                           @RequestParam("filterCol") List<String> filterCol,
+                           @RequestParam("condition") List<String> condition
     ) throws ReportSDKException, IOException {
+        SortCondition sortCondition = new SortCondition(col, sortBy);
+        FilterCondition filterCondition = null;
+        try {
+            filterCondition = new FilterCondition(filterCol, condition);
+        } catch (InvalidFiltersException e) {
+            model.addAttribute("message",
+                    "Ensure that you have entered BOTH filter column and filter condition for each filter.");
+            List<Employee> le = es.getEmployeeList();
+            model.addAttribute("Employees", le);
+            return "employeedtls";
+        }
 
-        if (es.generate(col, sortBy, filterCol, condition)) {
+        if (es.generate(sortCondition, filterCondition)) {
             model.addAttribute("message", "Report published succesfully");
         } else {
             model.addAttribute("message", "The output report file must be open in some other application.");

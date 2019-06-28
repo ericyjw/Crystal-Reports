@@ -26,10 +26,7 @@ import com.crystaldecisions.sdk.occa.report.data.ParameterFieldType;
 import com.crystaldecisions.sdk.occa.report.data.Tables;
 import com.crystaldecisions.sdk.occa.report.document.ReportDocument;
 import com.crystaldecisions.sdk.occa.report.exportoptions.ReportExportFormat;
-import com.crystaldecisions.reports.reportdefinition.ParameterType;
 import com.crystaldecisions.sdk.occa.report.application.ReportClientDocument;
-import com.crystaldecisions12.sdk.occa.report.data.Field;
-import com.crystaldecisions12.sdk.occa.report.data.Fields;
 //import com.crystaldecisions12.sdk.occa.report.data.ParameterFieldType;
 import com.crystaldecisions.sdk.occa.report.data.IField;
 

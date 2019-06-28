@@ -1,7 +1,7 @@
 /**
- * This sample code is an example of how to use the Business Objects APIs. 
- * Because the sample code is designed for demonstration only, it is 
- * unsupported.  You are free to modify and distribute the sample code as needed.   
+ * This sample code is an example of how to use the Business Objects APIs.
+ * Because the sample code is designed for demonstration only, it is
+ * unsupported.  You are free to modify and distribute the sample code as needed.
  */
 package com.businessobjects.samples;
 
@@ -33,6 +33,9 @@ import com.crystaldecisions.sdk.occa.report.lib.IStrings;
 import com.crystaldecisions.sdk.occa.report.lib.PropertyBag;
 import com.crystaldecisions.sdk.occa.report.lib.ReportSDKException;
 import com.crystaldecisions.sdk.occa.report.lib.ReportSDKExceptionBase;
+import com.lister.Project.domain.Filter;
+import com.lister.Project.domain.FilterCondition;
+import com.lister.Project.domain.SortCondition;
 
 /**
  * Crystal Reports Java Helper Sample.
@@ -46,14 +49,14 @@ public class CRJavaHelper {
 
     /**
      * Logs on to all existing datasource
-     * 
+     *
      * @param clientDoc The reportClientDocument representing the report being used
      * @param username    The DB logon user name
      * @param password    The DB logon password
      * @throws ReportSDKException
      */
-    public static void logonDataSource(ReportClientDocument clientDoc, 
-                String username, String password) throws ReportSDKException {
+    public static void logonDataSource(ReportClientDocument clientDoc,
+                                       String username, String password) throws ReportSDKException {
         clientDoc.getDatabaseController().logon(username, password);
     }
 
@@ -65,14 +68,16 @@ public class CRJavaHelper {
      * @param connectionURL  The connection URL
      * @param driverName    The driver Name
      * @param jndiName        The JNDI name
+     * @param sortCondition The given sort condition
+     * @param filterCondition The given param condition
      * @throws ReportSDKException
      */
     public static void changeDataSource(ReportClientDocument clientDoc,
-                String username, String password, String connectionURL,
-                String driverName,String jndiName, String col, String sortBy, String filterCol, String condition) throws ReportSDKException {
+                                        String username, String password, String connectionURL,
+                                        String driverName, String jndiName, SortCondition sortCondition, FilterCondition filterCondition) throws ReportSDKException {
 
         changeDataSource(clientDoc, null, null, username, password, connectionURL, driverName,
-                jndiName, col, sortBy, filterCol, condition);
+                jndiName, sortCondition, filterCondition);
     }
 
     /**
@@ -85,12 +90,14 @@ public class CRJavaHelper {
      * @param connectionURL  The connection URL
      * @param driverName    The driver Name
      * @param jndiName        The JNDI name
+     * @param sortCondition The given sort condition
+     * @param filterCondition The given param condition
      * @throws ReportSDKException
      */
     private static void changeDataSource(ReportClientDocument clientDoc,
-                String reportName, String tableName,
-                String username, String password, String connectionURL,
-                String driverName,String jndiName, String col, String sortBy, String filterCol, String condition) throws ReportSDKException {
+                                         String reportName, String tableName,
+                                         String username, String password, String connectionURL,
+                                         String driverName, String jndiName, SortCondition sortCondition, FilterCondition filterCondition) throws ReportSDKException {
 
         PropertyBag propertyBag = null;
         IConnectionInfo connectionInfo = null;
@@ -126,14 +133,13 @@ public class CRJavaHelper {
         if (reportName == null || reportName.equals("")) {
             Tables tables = clientDoc.getDatabaseController().getDatabase().getTables();
 
-            for(int i = 0;i < tables.size();i++){
+            for (int i = 0; i < tables.size(); i++) {
                 origTable = tables.getTable(i);
-                sortBy(clientDoc, origTable, col, sortBy);
-                filterBy(clientDoc, "{EMPLOYEE_KROGER." + filterCol +"}" + condition);
-
+                sortBy(clientDoc, origTable, sortCondition);
+                filterBy(clientDoc, filterCondition);
 
                 if (tableName == null || origTable.getName().equals(tableName)) {
-                    newTable = (ITable)origTable.clone(true);
+                    newTable = (ITable) origTable.clone(true);
 
                     // We set the Fully qualified name to the Table Alias to keep the
                     // method generic
@@ -160,8 +166,8 @@ public class CRJavaHelper {
                     propertyBag.put("Trusted_Connection", TRUSTED_CONNECTION);
                     propertyBag.put("Server Type", SERVER_TYPE);
                     propertyBag.put("Use JDBC", USE_JDBC);
-                    propertyBag.put("Database DLL",DATABASE_DLL );
-                    propertyBag.put("JNDI Datasource Name",JNDI_DATASOURCE_NAME );
+                    propertyBag.put("Database DLL", DATABASE_DLL);
+                    propertyBag.put("JNDI Datasource Name", JNDI_DATASOURCE_NAME);
                     propertyBag.put("Connection URL", CONNECTION_URL);
                     propertyBag.put("Database Class Name", DATABASE_CLASS_NAME);
                     // propertyBag.put("Server Name", SERVER_NAME); //Optional property
@@ -188,12 +194,12 @@ public class CRJavaHelper {
         // creating a separate method which accepts
         if (reportName == null || !(reportName.equals(""))) {
             IStrings subNames = clientDoc.getSubreportController().getSubreportNames();
-            for (int subNum=0;subNum<subNames.size();subNum++) {
+            for (int subNum = 0; subNum < subNames.size(); subNum++) {
                 Tables tables = clientDoc.getSubreportController().getSubreport(subNames.getString(subNum)).getDatabaseController().getDatabase().getTables();
-                for(int i = 0;i < tables.size();i++){
+                for (int i = 0; i < tables.size(); i++) {
                     origTable = tables.getTable(i);
                     if (tableName == null || origTable.getName().equals(tableName)) {
-                        newTable = (ITable)origTable.clone(true);
+                        newTable = (ITable) origTable.clone(true);
 
                         // We set the Fully qualified name to the Table Alias to keep
                         // the method generic
@@ -219,8 +225,8 @@ public class CRJavaHelper {
                         propertyBag.put("Trusted_Connection", TRUSTED_CONNECTION);
                         propertyBag.put("Server Type", SERVER_TYPE);
                         propertyBag.put("Use JDBC", USE_JDBC);
-                        propertyBag.put("Database DLL",DATABASE_DLL );
-                        propertyBag.put("JNDI Datasource Name",JNDI_DATASOURCE_NAME );
+                        propertyBag.put("Database DLL", DATABASE_DLL);
+                        propertyBag.put("JNDI Datasource Name", JNDI_DATASOURCE_NAME);
                         propertyBag.put("Connection URL", CONNECTION_URL);
                         propertyBag.put("Database Class Name", DATABASE_CLASS_NAME);
                         // propertyBag.put("Server Name", SERVER_NAME); //Optional property
@@ -245,9 +251,25 @@ public class CRJavaHelper {
         }
     }
 
-    private static void filterBy(ReportClientDocument clientDoc, String filterCondition) throws ReportSDKException {
-        clientDoc.getDataDefController().getRecordFilterController()
-                .setFormulaText(filterCondition);
+    /**
+     * Filter by the given filter condition.
+     *
+     * @param clientDoc
+     * @param filterCondition given filter condition
+     * @throws ReportSDKException
+     */
+    private static void filterBy(ReportClientDocument clientDoc, FilterCondition filterCondition) throws ReportSDKException {
+        if (filterCondition != null) {
+            for (int i = 0;  i < filterCondition.size(); i++){
+                Filter filter = filterCondition.getFilterAt(i);
+                String condition = "";
+                if(i != 0) {
+                    condition = condition + " AND ";
+                }
+                condition = "{EMPLOYEE_KROGER." + filter.getCol() + "}" + filter.getCondition();
+                clientDoc.getDataDefController().getRecordFilterController().setFormulaText(condition);
+            }
+        }
     }
 
     /**
@@ -255,12 +277,11 @@ public class CRJavaHelper {
      *
      * @param clientDoc
      * @param table given table
-     * @param colName given column name
-     * @param sortDirection given sort direction
+     * @param sortCondition given sort condition
      */
-    private static void sortBy(ReportClientDocument clientDoc, ITable table, String colName, String sortDirection) throws ReportSDKException {
-        Sort sort = setSortCol(clientDoc, table, colName);
-        sort = setSortDirection(sort, sortDirection);
+    private static void sortBy(ReportClientDocument clientDoc, ITable table, SortCondition sortCondition) throws ReportSDKException {
+        Sort sort = setSortCol(clientDoc, table, sortCondition.getCol());
+        sort = setSortDirection(sort, sortCondition.getSortDirection());
         if (isValid(sort)) {
             clientDoc.getDataDefController().getRecordSortController().add(-1, sort);
         }
@@ -320,7 +341,7 @@ public class CRJavaHelper {
 
     /**
      * Passes a populated java.sql.Resultset object to a Table object
-     * 
+     *
      * @param clientDoc The reportClientDocument representing the report being used
      * @param rs        The java.sql.Resultset used to populate the Table
      * @param tableAlias    The alias of the table
@@ -329,17 +350,17 @@ public class CRJavaHelper {
      * @throws ReportSDKException
      */
     public static void passResultSet(ReportClientDocument clientDoc, java.sql.ResultSet rs,
-            String tableAlias, String reportName) throws ReportSDKException {
-        if(reportName.equals(""))
-            clientDoc.getDatabaseController().setDataSource(rs, tableAlias,tableAlias);
+                                     String tableAlias, String reportName) throws ReportSDKException {
+        if (reportName.equals(""))
+            clientDoc.getDatabaseController().setDataSource(rs, tableAlias, tableAlias);
         else
-            clientDoc.getSubreportController().getSubreport(reportName).getDatabaseController().setDataSource(rs, tableAlias,tableAlias);
+            clientDoc.getSubreportController().getSubreport(reportName).getDatabaseController().setDataSource(rs, tableAlias, tableAlias);
 
     }
 
     /**
      * Passes a populated collection of a Java class to a Table object
-     * 
+     *
      * @param clientDoc     The reportClientDocument representing the report being used
      * @param dataSet        The java.sql.Resultset used to populate the Table
      * @param className        The fully-qualified class name of the POJO objects being passed
@@ -348,18 +369,18 @@ public class CRJavaHelper {
      *                         is to be used, "" should be passed
      * @throws ReportSDKException
      */
-    public static void passPOJO(ReportClientDocument clientDoc, Collection dataSet, 
-            String className, String tableAlias, String reportName) throws ReportSDKException,ClassNotFoundException{
-        if(reportName.equals(""))
-            clientDoc.getDatabaseController().setDataSource(dataSet, Class.forName(className),tableAlias,tableAlias);
+    public static void passPOJO(ReportClientDocument clientDoc, Collection dataSet,
+                                String className, String tableAlias, String reportName) throws ReportSDKException, ClassNotFoundException {
+        if (reportName.equals(""))
+            clientDoc.getDatabaseController().setDataSource(dataSet, Class.forName(className), tableAlias, tableAlias);
         else
-            clientDoc.getSubreportController().getSubreport(reportName).getDatabaseController().setDataSource(dataSet, Class.forName(className),tableAlias,tableAlias);
+            clientDoc.getSubreportController().getSubreport(reportName).getDatabaseController().setDataSource(dataSet, Class.forName(className), tableAlias, tableAlias);
 
     }
 
     /**
      * Passes a single discrete parameter value to a report parameter
-     * 
+     *
      * @param clientDoc        The reportClientDocument representing the report being used
      * @param reportName    The name of the subreport.  If tables in the main report
      *                         is to be used, "" should be passed
@@ -367,9 +388,9 @@ public class CRJavaHelper {
      * @param newValue        The new value of the parameter 
      * @throws ReportSDKException
      */
-    public static void addDiscreteParameterValue(ReportClientDocument clientDoc, String reportName, String parameterName, Object newValue) throws ReportSDKException{
+    public static void addDiscreteParameterValue(ReportClientDocument clientDoc, String reportName, String parameterName, Object newValue) throws ReportSDKException {
         DataDefController dataDefController = null;
-        if(reportName.equals(""))
+        if (reportName.equals(""))
             dataDefController = clientDoc.getDataDefController();
         else
             dataDefController = clientDoc.getSubreportController().getSubreport(reportName).getDataDefController();
@@ -377,22 +398,22 @@ public class CRJavaHelper {
         ParameterFieldDiscreteValue newDiscValue = new ParameterFieldDiscreteValue();
         newDiscValue.setValue(newValue);
 
-        ParameterField paramField = (ParameterField)dataDefController.getDataDefinition().getParameterFields().findField(parameterName, FieldDisplayNameType.fieldName, Locale.getDefault());
+        ParameterField paramField = (ParameterField) dataDefController.getDataDefinition().getParameterFields().findField(parameterName, FieldDisplayNameType.fieldName, Locale.getDefault());
         System.out.println(paramField.getName());
         boolean multiValue = paramField.getAllowMultiValue();
 
-        if(multiValue) {
-            Values newVals = (Values)paramField.getCurrentValues().clone(true);
+        if (multiValue) {
+            Values newVals = (Values) paramField.getCurrentValues().clone(true);
             newVals.add(newDiscValue);
-            clientDoc.getDataDefController().getParameterFieldController().setCurrentValue(reportName, parameterName ,newVals);
+            clientDoc.getDataDefController().getParameterFieldController().setCurrentValue(reportName, parameterName, newVals);
         } else {
-            clientDoc.getDataDefController().getParameterFieldController().setCurrentValue(reportName, parameterName , newValue);
+            clientDoc.getDataDefController().getParameterFieldController().setCurrentValue(reportName, parameterName, newValue);
         }
     }
 
     /**
      * Passes multiple discrete parameter values to a report parameter
-     * 
+     *
      * @param clientDoc        The reportClientDocument representing the report being used
      * @param reportName    The name of the subreport.  If tables in the main report
      *                         is to be used, "" should be passed
@@ -400,14 +421,14 @@ public class CRJavaHelper {
      * @param newValues        An array of new values to get set on the parameter
      * @throws ReportSDKException
      */
-    public static void addDiscreteParameterValue(ReportClientDocument clientDoc, String reportName, String parameterName, Object[] newValues) throws ReportSDKException{
-        clientDoc.getDataDefController().getParameterFieldController().setCurrentValues(reportName, parameterName ,newValues);
+    public static void addDiscreteParameterValue(ReportClientDocument clientDoc, String reportName, String parameterName, Object[] newValues) throws ReportSDKException {
+        clientDoc.getDataDefController().getParameterFieldController().setCurrentValues(reportName, parameterName, newValues);
     }
 
     /**
      * Passes a single range parameter value to a report parameter.  The range is assumed to
      * be inclusive on beginning and end.
-     * 
+     *
      * @param clientDoc        The reportClientDocument representing the report being used
      * @param reportName    The name of the subreport.  If tables in the main report
      *                         is to be used, "" should be passed
@@ -416,7 +437,7 @@ public class CRJavaHelper {
      * @param endValue        The value of the end of the range
      * @throws ReportSDKException
      */
-    public static void addRangeParameterValue(ReportClientDocument clientDoc, String reportName, String parameterName, Object beginValue, Object endValue) throws ReportSDKException{
+    public static void addRangeParameterValue(ReportClientDocument clientDoc, String reportName, String parameterName, Object beginValue, Object endValue) throws ReportSDKException {
         addRangeParameterValue(clientDoc, reportName, parameterName, beginValue, RangeValueBoundType.inclusive, endValue, RangeValueBoundType.inclusive);
     }
 
@@ -425,10 +446,10 @@ public class CRJavaHelper {
      *
      * This overload of the addRangeParameterValue will only work if the
      * parameter is setup to accept multiple values.
-     * 
+     *
      * If the Parameter does not accept multiple values then it is expected that
      * this version of the method will return an error
-     * 
+     *
      * @param clientDoc        The reportClientDocument representing the report being used
      * @param reportName    The name of the subreport.  If tables in the main report
      *                         is to be used, "" should be passed
@@ -437,13 +458,13 @@ public class CRJavaHelper {
      * @param endValues        Array of ending values.  Must be same length as beginValues.
      * @throws ReportSDKException
      */
-    public static void addRangeParameterValue(ReportClientDocument clientDoc, String reportName, String parameterName, Object[] beginValues, Object[] endValues) throws ReportSDKException{
+    public static void addRangeParameterValue(ReportClientDocument clientDoc, String reportName, String parameterName, Object[] beginValues, Object[] endValues) throws ReportSDKException {
         addRangeParameterValue(clientDoc, reportName, parameterName, beginValues, RangeValueBoundType.inclusive, endValues, RangeValueBoundType.inclusive);
     }
-    
+
     /**
      * Passes a single range parameter value to a report parameter
-     * 
+     *
      * @param clientDoc        The reportClientDocument representing the report being used
      * @param reportName    The name of the subreport.  If tables in the main report
      *                         is to be used, "" should be passed
@@ -454,9 +475,9 @@ public class CRJavaHelper {
      * @param upperBoundType    The inclusion/exclusion range of the end of range.
      * @throws ReportSDKException
      */
-    public static void addRangeParameterValue(ReportClientDocument clientDoc, String reportName, String parameterName, Object beginValue, RangeValueBoundType lowerBoundType,Object endValue, RangeValueBoundType upperBoundType) throws ReportSDKException{
+    public static void addRangeParameterValue(ReportClientDocument clientDoc, String reportName, String parameterName, Object beginValue, RangeValueBoundType lowerBoundType, Object endValue, RangeValueBoundType upperBoundType) throws ReportSDKException {
         DataDefController dataDefController = null;
-        if(reportName.equals(""))
+        if (reportName.equals(""))
             dataDefController = clientDoc.getDataDefController();
         else
             dataDefController = clientDoc.getSubreportController().getSubreport(reportName).getDataDefController();
@@ -467,15 +488,15 @@ public class CRJavaHelper {
         newRangeValue.setEndValue(endValue);
         newRangeValue.setUpperBoundType(upperBoundType);
 
-        ParameterField paramField = (ParameterField)dataDefController.getDataDefinition().getParameterFields().findField(parameterName, FieldDisplayNameType.fieldName, Locale.getDefault());
+        ParameterField paramField = (ParameterField) dataDefController.getDataDefinition().getParameterFields().findField(parameterName, FieldDisplayNameType.fieldName, Locale.getDefault());
         boolean multiValue = paramField.getAllowMultiValue();
 
         if (multiValue) {
-            Values newVals = (Values)paramField.getCurrentValues().clone(true);
+            Values newVals = (Values) paramField.getCurrentValues().clone(true);
             newVals.add(newRangeValue);
-            clientDoc.getDataDefController().getParameterFieldController().setCurrentValue(reportName, parameterName , newVals);
+            clientDoc.getDataDefController().getParameterFieldController().setCurrentValue(reportName, parameterName, newVals);
         } else {
-            clientDoc.getDataDefController().getParameterFieldController().setCurrentValue(reportName, parameterName , newRangeValue);
+            clientDoc.getDataDefController().getParameterFieldController().setCurrentValue(reportName, parameterName, newRangeValue);
         }
     }
 
@@ -484,10 +505,10 @@ public class CRJavaHelper {
      *
      * This overload of the addRangeParameterValue will only work if the
      * parameter is setup to accept multiple values.
-     * 
+     *
      * If the Parameter does not accept multiple values then it is expected that
      * this version of the method will return an error
-     * 
+     *
      * @param clientDoc        The reportClientDocument representing the report being used
      * @param reportName    The name of the subreport.  If tables in the main report
      *                         is to be used, "" should be passed
@@ -496,27 +517,27 @@ public class CRJavaHelper {
      * @param lowerBoundType    The inclusion/exclusion range of the start of range.
      * @param endValues        Array of ending values.  Must be same length as beginValues.
      * @param upperBoundType    The inclusion/exclusion range of the end of range.
-     * 
+     *
      * @throws ReportSDKException
      */
-    public static void addRangeParameterValue(ReportClientDocument clientDoc, String reportName, String parameterName, Object[] beginValues,RangeValueBoundType lowerBoundType, Object[] endValues, RangeValueBoundType upperBoundType) throws ReportSDKException{
+    public static void addRangeParameterValue(ReportClientDocument clientDoc, String reportName, String parameterName, Object[] beginValues, RangeValueBoundType lowerBoundType, Object[] endValues, RangeValueBoundType upperBoundType) throws ReportSDKException {
         // it is expected that the beginValues array is the same size as the
         // endValues array
         ParameterFieldRangeValue[] newRangeValues = new ParameterFieldRangeValue[beginValues.length];
-        for(int i=0;i<beginValues.length;i++){
+        for (int i = 0; i < beginValues.length; i++) {
             newRangeValues[i] = new ParameterFieldRangeValue();
             newRangeValues[i].setBeginValue(beginValues[i]);
             newRangeValues[i].setLowerBoundType(lowerBoundType);
             newRangeValues[i].setEndValue(endValues[i]);
             newRangeValues[i].setUpperBoundType(upperBoundType);
         }
-        clientDoc.getDataDefController().getParameterFieldController().setCurrentValues(reportName, parameterName , newRangeValues);
+        clientDoc.getDataDefController().getParameterFieldController().setCurrentValues(reportName, parameterName, newRangeValues);
 
     }
-    
+
     /**
      * Exports a report to PDF
-     * 
+     *
      * @param clientDoc        The reportClientDocument representing the report being used
      * @param response        The HttpServletResponse object
      * @param attachment    true to prompts for open or save; false opens the report
@@ -527,17 +548,17 @@ public class CRJavaHelper {
     public static void exportPDF(ReportClientDocument clientDoc, HttpServletResponse response, boolean attachment) throws ReportSDKExceptionBase, IOException {
         // PDF export allows page range export. The following routine ensures
         // that the requested page range is valid
-        PDFExportFormatOptions  pdfOptions = new PDFExportFormatOptions();
+        PDFExportFormatOptions pdfOptions = new PDFExportFormatOptions();
         ExportOptions exportOptions = new ExportOptions();
-        exportOptions.setExportFormatType(ReportExportFormat.PDF);        
+        exportOptions.setExportFormatType(ReportExportFormat.PDF);
         exportOptions.setFormatOptions(pdfOptions);
 
         export(clientDoc, exportOptions, response, attachment, "application/pdf", "pdf");
     }
-    
+
     /**
      * Exports a report to PDF for a range of pages
-     * 
+     *
      * @param clientDoc        The reportClientDocument representing the report being used
      * @param response        The HttpServletResponse object
      * @param startPage        Starting page
@@ -547,23 +568,23 @@ public class CRJavaHelper {
      * @throws ReportSDKExceptionBase
      * @throws IOException
      */
-    public static void exportPDF(ReportClientDocument clientDoc, HttpServletResponse response, ServletContext  context, int startPage, int endPage,boolean attachment) throws ReportSDKExceptionBase, IOException {
+    public static void exportPDF(ReportClientDocument clientDoc, HttpServletResponse response, ServletContext context, int startPage, int endPage, boolean attachment) throws ReportSDKExceptionBase, IOException {
         // PDF export allows page range export. The following routine ensures
         // that the requested page range is valid
-        PDFExportFormatOptions  pdfOptions = new PDFExportFormatOptions();
+        PDFExportFormatOptions pdfOptions = new PDFExportFormatOptions();
         pdfOptions.setStartPageNumber(startPage);
         pdfOptions.setEndPageNumber(endPage);
         ExportOptions exportOptions = new ExportOptions();
-        exportOptions.setExportFormatType(ReportExportFormat.PDF);        
+        exportOptions.setExportFormatType(ReportExportFormat.PDF);
         exportOptions.setFormatOptions(pdfOptions);
 
         export(clientDoc, exportOptions, response, attachment, "application/pdf", "pdf");
 
     }
-    
+
     /**
      * Exports a report to RTF
-     * 
+     *
      * @param clientDoc        The reportClientDocument representing the report being used
      * @param response        The HttpServletResponse object
      * @param attachment    true to prompts for open or save; false opens the report
@@ -574,17 +595,17 @@ public class CRJavaHelper {
     public static void exportRTF(ReportClientDocument clientDoc, HttpServletResponse response, boolean attachment) throws ReportSDKExceptionBase, IOException {
         // RTF export allows page range export. The following routine ensures
         // that the requested page range is valid
-        RTFWordExportFormatOptions  rtfOptions = new RTFWordExportFormatOptions();
+        RTFWordExportFormatOptions rtfOptions = new RTFWordExportFormatOptions();
         ExportOptions exportOptions = new ExportOptions();
-        exportOptions.setExportFormatType(ReportExportFormat.RTF);        
+        exportOptions.setExportFormatType(ReportExportFormat.RTF);
         exportOptions.setFormatOptions(rtfOptions);
 
         export(clientDoc, exportOptions, response, attachment, "text/rtf", "rtf");
     }
-    
+
     /**
      * Exports a report to RTF for a range of pages
-     * 
+     *
      * @param clientDoc        The reportClientDocument representing the report being used
      * @param response        The HttpServletResponse object
      * @param startPage        Starting page
@@ -594,14 +615,14 @@ public class CRJavaHelper {
      * @throws ReportSDKExceptionBase
      * @throws IOException
      */
-    public static void exportRTF(ReportClientDocument clientDoc, HttpServletResponse response, ServletContext  context, int startPage, int endPage, boolean attachment) throws ReportSDKExceptionBase, IOException {
+    public static void exportRTF(ReportClientDocument clientDoc, HttpServletResponse response, ServletContext context, int startPage, int endPage, boolean attachment) throws ReportSDKExceptionBase, IOException {
         // RTF export allows page range export. The following routine ensures
         // that the requested page range is valid
-        RTFWordExportFormatOptions  rtfOptions = new RTFWordExportFormatOptions();
+        RTFWordExportFormatOptions rtfOptions = new RTFWordExportFormatOptions();
         rtfOptions.setStartPageNumber(startPage);
         rtfOptions.setEndPageNumber(endPage);
         ExportOptions exportOptions = new ExportOptions();
-        exportOptions.setExportFormatType(ReportExportFormat.RTF);        
+        exportOptions.setExportFormatType(ReportExportFormat.RTF);
         exportOptions.setFormatOptions(rtfOptions);
 
         export(clientDoc, exportOptions, response, attachment, "text/rtf", "rtf");
@@ -609,7 +630,7 @@ public class CRJavaHelper {
 
     /**
      * Exports a report to RTF
-     * 
+     *
      * @param clientDoc     The reportClientDocument representing the report being used
      * @param response      The HttpServletResponse object
      * @param attachment    true to prompts for open or save; false opens the report
@@ -620,17 +641,17 @@ public class CRJavaHelper {
     public static void exportRTFEditable(ReportClientDocument clientDoc, HttpServletResponse response, boolean attachment) throws ReportSDKExceptionBase, IOException {
         // RTF export allows page range export. The following routine ensures
         // that the requested page range is valid
-        EditableRTFExportFormatOptions  rtfOptions = new EditableRTFExportFormatOptions();
+        EditableRTFExportFormatOptions rtfOptions = new EditableRTFExportFormatOptions();
         ExportOptions exportOptions = new ExportOptions();
-        exportOptions.setExportFormatType(ReportExportFormat.editableRTF);      
+        exportOptions.setExportFormatType(ReportExportFormat.editableRTF);
         exportOptions.setFormatOptions(rtfOptions);
 
         export(clientDoc, exportOptions, response, attachment, "text/rtf", "rtf");
-    }    
-    
+    }
+
     /**
      * Exports a report to RTF for a range of pages
-     * 
+     *
      * @param clientDoc     The reportClientDocument representing the report being used
      * @param response      The HttpServletResponse object
      * @param startPage     Starting page
@@ -640,22 +661,22 @@ public class CRJavaHelper {
      * @throws ReportSDKExceptionBase
      * @throws IOException
      */
-    public static void exportRTFEditable(ReportClientDocument clientDoc, HttpServletResponse response, ServletContext  context, int startPage, int endPage,boolean attachment) throws ReportSDKExceptionBase, IOException {
+    public static void exportRTFEditable(ReportClientDocument clientDoc, HttpServletResponse response, ServletContext context, int startPage, int endPage, boolean attachment) throws ReportSDKExceptionBase, IOException {
         // RTF export allows page range export. The following routine ensures
         // that the requested page range is valid
-        EditableRTFExportFormatOptions  rtfOptions = new EditableRTFExportFormatOptions();
+        EditableRTFExportFormatOptions rtfOptions = new EditableRTFExportFormatOptions();
         rtfOptions.setStartPageNumber(startPage);
         rtfOptions.setEndPageNumber(endPage);
         ExportOptions exportOptions = new ExportOptions();
-        exportOptions.setExportFormatType(ReportExportFormat.editableRTF);      
+        exportOptions.setExportFormatType(ReportExportFormat.editableRTF);
         exportOptions.setFormatOptions(rtfOptions);
 
         export(clientDoc, exportOptions, response, attachment, "text/rtf", "rtf");
     }
-    
+
     /**
      * Exports a report to Excel (Data Only)
-     * 
+     *
      * @param clientDoc     The reportClientDocument representing the report being used
      * @param response      The HttpServletResponse object
      * @param attachment    true to prompts for open or save; false opens the report
@@ -666,15 +687,15 @@ public class CRJavaHelper {
     public static void exportExcelDataOnly(ReportClientDocument clientDoc, HttpServletResponse response, boolean attachment) throws ReportSDKExceptionBase, IOException {
         DataOnlyExcelExportFormatOptions excelOptions = new DataOnlyExcelExportFormatOptions();
         ExportOptions exportOptions = new ExportOptions();
-        exportOptions.setExportFormatType(ReportExportFormat.recordToMSExcel);      
-        exportOptions.setFormatOptions(excelOptions );
+        exportOptions.setExportFormatType(ReportExportFormat.recordToMSExcel);
+        exportOptions.setFormatOptions(excelOptions);
 
         export(clientDoc, exportOptions, response, attachment, "application/excel", "xls");
     }
 
     /**
      * Exports a report to CSV
-     * 
+     *
      * @param clientDoc        The reportClientDocument representing the report being used
      * @param response        The HttpServletResponse object
      * @param attachment    true to prompts for open or save; false opens the report
@@ -687,15 +708,15 @@ public class CRJavaHelper {
         csvOptions.setSeparator(",");
         csvOptions.setDelimiter("\n");
         ExportOptions exportOptions = new ExportOptions();
-        exportOptions.setExportFormatType(ReportExportFormat.characterSeparatedValues);        
+        exportOptions.setExportFormatType(ReportExportFormat.characterSeparatedValues);
         exportOptions.setFormatOptions(csvOptions);
 
         export(clientDoc, exportOptions, response, attachment, "text/csv", "csv");
     }
-    
+
     /**
      * Exports a report to a specified format
-     * 
+     *
      * @param clientDoc       The reportClientDocument representing the report being used
      * @param exportOptions   Export options
      * @param response        The response object to write to
@@ -707,28 +728,24 @@ public class CRJavaHelper {
      * @throws IOException
      */
     private static void export(ReportClientDocument clientDoc, ExportOptions exportOptions, HttpServletResponse response, boolean attachment, String mimeType, String extension)
-        throws ReportSDKExceptionBase, IOException {
-        
+            throws ReportSDKExceptionBase, IOException {
+
         InputStream is = null;
         try {
             is = new BufferedInputStream(clientDoc.getPrintOutputController().export(exportOptions));
-            
+
             byte[] data = new byte[1024];
             response.setContentType(mimeType);
-            if (attachment)
-            {
+            if (attachment) {
                 String name = clientDoc.getReportSource().getReportTitle();
-                if (name == null)
-                {
+                if (name == null) {
                     name = "CrystalReportViewer";
-                }
-                else
-                {
+                } else {
                     name = name.replaceAll("\"", "");
                 }
-                
+
                 response.setHeader("Content-Disposition",
-                        "attachment; filename=\"" + name + "."+extension+"\"");
+                        "attachment; filename=\"" + name + "." + extension + "\"");
             }
             OutputStream os = response.getOutputStream();
             while (is.read(data) > -1) {
@@ -741,15 +758,15 @@ public class CRJavaHelper {
         }
 
     }
-    
+
     /**
      * Prints to the server printer
-     * 
+     *
      * @param clientDoc        The reportClientDocument representing the report being used
      * @param printerName    Name of printer used to print the report
-     * @throws ReportSDKException 
+     * @throws ReportSDKException
      */
-    public static void printToServer(ReportClientDocument clientDoc,String printerName)throws ReportSDKException {
+    public static void printToServer(ReportClientDocument clientDoc, String printerName) throws ReportSDKException {
         PrintReportOptions printOptions = new PrintReportOptions();
         // Note: Printer with the <printer name> below must already be
         // configured.
@@ -764,17 +781,17 @@ public class CRJavaHelper {
         // Print report
         clientDoc.getPrintOutputController().printReport(printOptions);
     }
-    
+
     /**
      * Prints a range of pages to the server printer
-     * 
+     *
      * @param clientDoc        The reportClientDocument representing the report being used
      * @param printerName    Name of printer used to print the report
      * @param startPage        Starting page
      * @param endPage        Ending page.
-     * @throws ReportSDKException 
+     * @throws ReportSDKException
      */
-    public static void printToServer(ReportClientDocument clientDoc,String printerName,int startPage, int endPage)throws ReportSDKException {
+    public static void printToServer(ReportClientDocument clientDoc, String printerName, int startPage, int endPage) throws ReportSDKException {
         PrintReportOptions printOptions = new PrintReportOptions();
         // Note: Printer with the <printer name> below must already be
         // configured.
@@ -785,7 +802,7 @@ public class CRJavaHelper {
         printOptions.setPaperSize(PaperSize.paperLetter);
         printOptions.setNumberOfCopies(1);
         printOptions.setCollated(false);
-        PrintReportOptions.PageRange printPageRange = new PrintReportOptions.PageRange(startPage,endPage);
+        PrintReportOptions.PageRange printPageRange = new PrintReportOptions.PageRange(startPage, endPage);
         printOptions.addPrinterPageRange(printPageRange);
 
         // Print report

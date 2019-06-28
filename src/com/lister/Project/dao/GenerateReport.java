@@ -13,6 +13,8 @@ import com.businessobjects.samples.CRJavaHelper;
 import com.crystaldecisions.sdk.occa.report.application.ReportClientDocument;
 import com.crystaldecisions.sdk.occa.report.exportoptions.ReportExportFormat;
 import com.crystaldecisions.sdk.occa.report.lib.ReportSDKException;
+import com.lister.Project.domain.FilterCondition;
+import com.lister.Project.domain.SortCondition;
 
 /**
  * Generate Crystal Report with the data in the database.
@@ -35,19 +37,17 @@ public class GenerateReport {
      * Takes in a sample Crystal Report, updates that sample with the data from the database and exports the updated
      * Crystal Report.
      *
-     * @param sortBy
-     * @param filterCol
-     * @param condition
+     *
      * @return
      * @throws ReportSDKException
      * @throws IOException
      */
-    public boolean generate(String col, String sortBy, String filterCol, String condition) throws ReportSDKException, IOException {
+    public boolean generate(SortCondition sortCondition, FilterCondition filterCondition) throws ReportSDKException, IOException {
 
         ReportClientDocument rcd = new ReportClientDocument();
         rcd.open(sampleReportFilePath, 0);
         CRJavaHelper crj = new CRJavaHelper();
-        crj.changeDataSource(rcd, db_user, db_pwd, db_url, db_driver, "", col, sortBy, filterCol, condition);
+        crj.changeDataSource(rcd, db_user, db_pwd, db_url, db_driver, "", sortCondition, filterCondition);
         crj.logonDataSource(rcd, db_user, db_pwd);
         rcd.checkDatabaseAndUpdate();
         rcd.refreshReportDocument();

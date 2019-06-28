@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.lister.Project.domain.FilterCondition;
+import com.lister.Project.domain.SortCondition;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
@@ -75,16 +77,14 @@ public class EmployeeService {
     }
 
     /**
-     * @param col
-     * @param sortBy
      * @return
      * @throws ReportSDKException
      * @throws IOException
      */
-    public boolean generate(String col, String sortBy, String filterCol, String condition) throws ReportSDKException,
+    public boolean generate(SortCondition sortCondition, FilterCondition filterCondition) throws ReportSDKException,
             IOException {
         gr = new GenerateReport();
-        return gr.generate(col, sortBy, filterCol, condition);
+        return gr.generate(sortCondition, filterCondition);
     }
 
     public void rollback() throws HibernateException, SQLException {

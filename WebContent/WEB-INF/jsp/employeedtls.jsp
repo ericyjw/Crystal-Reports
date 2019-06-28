@@ -45,8 +45,18 @@
             <option value="DESC">DESC</option>
         </select>
         <br><br>
-        Filter:
+        Filter 1:
         <select name="filterCol">
+            <option value=""></option>
+            <option value="id">ID</option>
+            <option value="name">NAME</option>
+            <option value="salary">SALARY</option>
+        </select>
+        <textarea name="condition" placeholder="e.g. = 'core'"></textarea>
+        <br><br>
+        Filter 2:
+        <select name="filterCol">
+            <option value=""></option>
             <option value="id">ID</option>
             <option value="name">NAME</option>
             <option value="salary">SALARY</option>
