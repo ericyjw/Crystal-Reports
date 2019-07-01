@@ -72,7 +72,7 @@ public class EmployeeService {
      * @param name
      * @return
      */
-    public List<Employee> getEmployeeList(String name) {
+    public List<Employee> getEmployeeList(List<String> name) {
         return empdao.getEmployeeByName(name);
     }
 

@@ -33,7 +33,7 @@
         </c:forEach>
     </table>
 
-    <form name="Generate_Report" action="generate" method="post">
+    <form name="Generate_Report" method="post">
         Sort:
         <select name="col">
             <option value="id">ID</option>
@@ -63,7 +63,8 @@
         </select>
         <textarea name="condition" placeholder="e.g. = 'core'"></textarea>
 
-        <button type="submit">Publish Report</button>
+        <button type="submit" formaction="filter">Filter</button>
+        <button type="submit" formaction="generate">Publish Report</button>
         <br/>
         <div id="msg" style="color:red">${message}</div>
     </form>

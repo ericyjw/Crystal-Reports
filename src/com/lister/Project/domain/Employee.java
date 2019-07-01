@@ -1,5 +1,7 @@
 package com.lister.Project.domain;
 
+import com.google.appengine.repackaged.com.google.gson.Gson;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -51,8 +53,4 @@ public class Employee {
 	public void setSalary(float salary) {
 		this.salary = salary;
 	}
-	@Override
-	public String toString() {
-		return "Employee [id=" + id + ", name=" + name + ", salary=" + salary + "]";
-	}  
 }

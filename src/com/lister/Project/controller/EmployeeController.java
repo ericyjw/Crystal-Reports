@@ -75,7 +75,7 @@ public class EmployeeController {
      * @throws IOException
      */
     @RequestMapping(value = "/generate",
-            params = { "col", "sortBy", "filterCol", "condition"})
+            params = {"col", "sortBy", "filterCol", "condition"})
     public String generate(Model model,
                            @RequestParam("col") String col,
                            @RequestParam("sortBy") String sortBy,
@@ -116,4 +116,24 @@ public class EmployeeController {
         model.addAttribute("reports", fname);
         return "reportlist";
     }
+
+    /**
+     * @param model
+     * @return
+     */
+//    @RequestMapping(value = "/filter",
+//            params = {"filterCol", "condition"})
+//    @ResponseBody
+//    public List<Employee> filter(Map<String, Object> model,
+//                                 @RequestParam("filterCol") List<String> filterCol,
+//                                 @RequestParam("condition") List<String> condition) {
+//        List<Employee> le = es.getEmployeeList(condition);
+//        model.put("Employees", le);
+//        //return "employeedtls";
+//        for (String a: condition ) {
+//            System.out.println(a);
+//        }
+//        return le;
+//    }
+
 }
